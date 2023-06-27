@@ -3,6 +3,9 @@ import { makePichauBuyBot } from "@core/bot/pichau/pichau-buyer-bot.factory";
 import { print_program_name } from "./helpers/program_name";
 import db, { findProductByName, insertProduct, updateProductByName } from "@data/db";
 import { Product } from "@data/models/Product.model";
+import { awaitableTimeout } from "@helpers/awaitable_timeout";
+import { minutesToMilliseconds } from "@helpers/time";
+import { randomNumber } from "@helpers/random";
 
 (async () => {
     print_program_name();
@@ -15,33 +18,37 @@ import { Product } from "@data/models/Product.model";
         botId: 0,
     });
 
-    try {
-        const products = await pichauBot.checkPagePrices(productsPageToCheck[0]);
-        const result = await Promise.all(
-            products.map(async (scrapedProduct) => {
-                const foundProduct = await findProductByName(scrapedProduct.name);
-                if (foundProduct && foundProduct.price !== scrapedProduct.price) {
-                    console.log(
-                        `Price of product ${scrapedProduct.name} changed from ${foundProduct.price} to ${scrapedProduct.price}!`
-                    );
-                    updateProductByName(scrapedProduct.name, scrapedProduct);
+    // eslint-disable-next-line no-constant-condition
+    while (true) {
+        try {
+            const products = await pichauBot.checkPagePrices(productsPageToCheck[0]);
+            const result = await Promise.all(
+                products.map(async (scrapedProduct) => {
+                    const foundProduct = await findProductByName(scrapedProduct.name);
+                    if (foundProduct && foundProduct.price !== scrapedProduct.price) {
+                        updateProductByName(scrapedProduct.name, scrapedProduct);
 
-                    return {
-                        product: scrapedProduct,
-                        priceChange: {
-                            oldPrice: foundProduct.price,
-                            newPrice: scrapedProduct.price,
-                        },
-                    };
-                }
+                        return {
+                            product: scrapedProduct,
+                            priceChange: {
+                                oldPrice: foundProduct.price,
+                                newPrice: scrapedProduct.price,
+                            },
+                        };
+                    }
 
-                if (!foundProduct) {
-                    insertProduct(scrapedProduct, scrapedProduct.store_id);
-                    console.log(`New product found: ${scrapedProduct.name}!`);
-                }
-            })
-        );
-    } catch (e) {
-        console.error(e);
+                    if (!foundProduct) {
+                        insertProduct(scrapedProduct, scrapedProduct.store_id);
+                        return {
+                            newProduct: scrapedProduct,
+                        };
+                    }
+                })
+            );
+
+            await awaitableTimeout(minutesToMilliseconds(randomNumber(8, 12)));
+        } catch (e) {
+            console.error("An error occurred while checking prices: ", e);
+        }
     }
 })();
