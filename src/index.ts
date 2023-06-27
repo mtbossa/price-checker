@@ -13,7 +13,6 @@ import { Product } from "@data/models/Product.model";
 type HandleProductsResult = Awaited<ReturnType<typeof handleProducts>>;
 
 const sendEmail = async (result: HandleProductsResult) => {
-    console.log(process.env.SMTP_USER, process.env.SMTP_PASS);
     const transporter = nodemailer.createTransport({
         host: process.env.SMTP_HOST,
         port: Number(process.env.SMTP_PORT),
