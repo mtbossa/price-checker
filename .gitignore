@@ -1,0 +1,10 @@
+node_modules/*
+dist/*
+.vscode/*
+.env
+*.db
+.~lock.*
+*.js
+*.map
+tmp/*
+.puppeteerrc.json

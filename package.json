@@ -1,0 +1,57 @@
+{
+    "name": "brazilian-stocks-strategies",
+    "description": "cli app that shows the best brazilian stocks based on some known strategies",
+    "author": "Mateus Ribeiro Bossa <mateus.rbossa@gmail.com>",
+    "license": "ISC",
+    "version": "0.0.0",
+    "keywords": [
+        "stocks",
+        "strategies",
+        "scrapping"
+    ],
+    "main": "dist/index.js",
+    "scripts": {
+        "dev": "NODE_ENV=dev nodemon --exec node --loader ts-node/esm --inspect -r tsconfig-paths/register src/index.ts",
+        "dev:windows": "set NODE_ENV=dev&&nodemon --exec node --loader ts-node/esm --inspect -r tsconfig-paths/register src/index.ts",
+        "non-dev": "nodemon --exec node --loader ts-node/esm --inspect -r tsconfig-paths/register src/index.ts",
+        "build": "tsc",
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "lint": "eslint . --max-warnings=0 --report-unused-disable-directives",
+        "lint:fix": "pnpm lint --fix",
+        "format": "prettier --write .",
+        "prepare": "husky install"
+    },
+    "devDependencies": {
+        "@types/cli-spinner": "^0.2.1",
+        "@types/node": "^18.16.1",
+        "@types/node-emoji": "^1.8.2",
+        "@types/prompts": "^2.4.4",
+        "@typescript-eslint/eslint-plugin": "^5.59.1",
+        "@typescript-eslint/parser": "^5.59.1",
+        "eslint": "^8.39.0",
+        "eslint-config-prettier": "^8.8.0",
+        "eslint-plugin-prettier": "^4.2.1",
+        "husky": "^8.0.0",
+        "lint-staged": "^13.2.2",
+        "nodemon": "^2.0.22",
+        "prettier": "2.8.8",
+        "ts-node": "^10.9.1",
+        "tsconfig-paths": "^4.2.0",
+        "typescript": "^5.0.4"
+    },
+    "engines": {
+        "node": "18.x"
+    },
+    "dependencies": {
+        "chalk": "^4.x",
+        "cli-spinner": "^0.2.10",
+        "csv-parser": "^3.0.0",
+        "node-emoji": "^1.11.0",
+        "prompts": "^2.4.2",
+        "puppeteer": "^19.11.1",
+        "puppeteer-extra": "^3.3.6",
+        "puppeteer-extra-plugin-stealth": "^2.11.2",
+        "puppeteer-table-parser": "^2.1.0",
+        "table": "^6.8.1"
+    }
+}
