@@ -1,8 +1,8 @@
 /* eslint @typescript-eslint/no-floating-promises: 0 */
+import "dotenv/config";
 import { makePichauBuyBot } from "@core/bot/pichau/pichau-buyer-bot.factory";
 import { print_program_name } from "./helpers/program_name";
 import db, { findProductByName, insertProduct, updateProductByName } from "@data/db";
-import { Product } from "@data/models/Product.model";
 import { awaitableTimeout } from "@helpers/awaitable_timeout";
 import { minutesToMilliseconds } from "@helpers/time";
 import { randomNumber } from "@helpers/random";

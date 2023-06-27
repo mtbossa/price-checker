@@ -9,3 +9,5 @@ dist/*
 tmp/*
 .puppeteerrc.json
 *.sqlite
+*.env
+!*.example
