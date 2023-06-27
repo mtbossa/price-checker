@@ -114,7 +114,7 @@ const handleProducts = async (scrapedProducts: Product[]) => {
             await awaitableTimeout(minutesToMilliseconds(randomNumber(8, 12)));
         } catch (e) {
             console.error("An error occurred while checking prices: ", e);
-            await awaitableTimeout(minutesToMilliseconds(randomNumber(8, 12)));
+            await awaitableTimeout(minutesToMilliseconds(randomNumber(1, 3)));
         }
     }
 })();
