@@ -5,6 +5,6 @@ import { print_new_line } from "./new_line";
 
 export const print_program_name = () => {
     print_new_line();
-    console.log(`      ${chalk.bold("Pichau PROMO BUY")}`);
+    console.log(`      ${chalk.bold("Price checker")}`);
     print_new_line();
 };
