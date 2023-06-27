@@ -1,18 +1,17 @@
 import { PuppeteerLaunchOptions } from "puppeteer";
-import { PichauBuyerBot } from "./pichau-buyer.bot";
-import { launchBrowser, newPage } from "@helpers/bot";
+import { launchBrowser } from "@helpers/bot";
+import { PichauPriceCheckerBot } from "./pichau-buyer.bot";
+import { Bot } from "../bot";
 
 export interface PichauBuyerBotConfig {
     botId: number;
-    liveURL: string;
 }
 
 export const makePichauBuyBot = async (config: PichauBuyerBotConfig) => {
     const launchOptions = getLaunchOptions(config.botId);
     const browser = await launchBrowser(launchOptions);
-    const livePage = await newPage(browser);
 
-    return new PichauBuyerBot(browser, livePage, config.liveURL);
+    return new PichauPriceCheckerBot(config.botId, browser);
 };
 
 const getLaunchOptions = (botId: number): PuppeteerLaunchOptions => {
@@ -24,7 +23,7 @@ const getLaunchOptions = (botId: number): PuppeteerLaunchOptions => {
     return {
         headless: false,
         defaultViewport: null,
-        userDataDir: `./tmp/user-data-${botId}`,
+        userDataDir: Bot.getDataDir(botId),
         args,
     };
 };

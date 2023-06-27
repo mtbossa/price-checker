@@ -83,3 +83,25 @@ export const launchBrowser = async (options: PuppeteerLaunchOptions) => {
     console.log("Browser launched!");
     return browser;
 };
+
+export const navigateToURL = async (page: Page, url: string) => {
+    const maxRetries = 5; // Maximum number of retries
+    let retryCount = 0;
+
+    while (retryCount < maxRetries) {
+        console.log(`Trying to navigate to URL: ${url}). Attempt: ${retryCount}...`);
+        try {
+            await page.goto(url);
+            console.log("Navigation successful");
+            break; // Exit the loop if navigation is successful
+        } catch (error) {
+            console.log("Navigation error occurred, retrying...");
+            retryCount++;
+            await new Promise((r) => setTimeout(r, 3000));
+        }
+    }
+
+    if (retryCount === maxRetries) {
+        console.log("Maximum retries reached, unable to navigate to the page");
+    }
+};
