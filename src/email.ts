@@ -1,7 +1,7 @@
 import nodemailer from "nodemailer";
-import { HandleProductsResult } from "src";
+import { PriceCheckerResult } from "./price-checker";
 
-export const generateEmailHTML = (result: HandleProductsResult) => {
+export const generateEmailHTML = (result: PriceCheckerResult) => {
     return `
         <h1>Price Change</h1>
         <table>
@@ -22,7 +22,7 @@ export const generateEmailHTML = (result: HandleProductsResult) => {
                                 <td>${product.product?.name ?? ""}</td>
                                 <td>${product.priceChange?.oldPrice ?? ""}</td>
                                 <td>${product.priceChange?.newPrice ?? ""}</td>
-                                <td><a href="${product.newProduct?.url ?? ""}">${
+                                <td><a href="${product.product?.url ?? ""}">${
                                 product.product?.url ?? ""
                             }</a></td>
                             </tr>`;
@@ -60,7 +60,7 @@ export const generateEmailHTML = (result: HandleProductsResult) => {
     `;
 };
 
-export const sendEmail = async (result: HandleProductsResult) => {
+export const sendEmail = async (result: PriceCheckerResult) => {
     const transporter = nodemailer.createTransport({
         host: process.env.SMTP_HOST,
         port: Number(process.env.SMTP_PORT),

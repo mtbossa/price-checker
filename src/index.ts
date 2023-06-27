@@ -9,40 +9,7 @@ import { minutesToMilliseconds } from "@helpers/time";
 import { randomNumber } from "@helpers/random";
 import { Product } from "@data/models/Product.model";
 import { generateEmailHTML, sendEmail } from "./email";
-
-export type HandleProductsResult = Awaited<ReturnType<typeof handleProducts>>;
-
-const handleProducts = async (scrapedProducts: Product[]) => {
-    let result = await Promise.all(
-        scrapedProducts.map(async (scrapedProduct) => {
-            const foundProduct = await findProductByName(scrapedProduct.name);
-            if (foundProduct && foundProduct.price !== scrapedProduct.price) {
-                updateProductByName(scrapedProduct.name, scrapedProduct);
-
-                return {
-                    product: scrapedProduct,
-                    priceChange: {
-                        oldPrice: foundProduct.price,
-                        newPrice: scrapedProduct.price,
-                    },
-                };
-            }
-
-            if (!foundProduct) {
-                insertProduct(scrapedProduct, scrapedProduct.store_id);
-                return {
-                    newProduct: scrapedProduct,
-                };
-            }
-
-            return null;
-        })
-    );
-
-    result = result.filter((product) => product !== null);
-
-    return result;
-};
+import { priceChecker } from "./price-checker";
 
 (async () => {
     print_program_name();
@@ -59,7 +26,7 @@ const handleProducts = async (scrapedProducts: Product[]) => {
     while (true) {
         try {
             const products = await pichauBot.checkPagePrices(productsPageToCheck[0]);
-            const result = await handleProducts(products);
+            const result = await priceChecker(products);
             if (result.length > 0) {
                 await sendEmail(result);
             }
