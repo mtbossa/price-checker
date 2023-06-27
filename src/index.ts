@@ -16,19 +16,18 @@ import { priceChecker } from "./price-checker";
         "https://www.pichau.com.br/hardware/placa-de-video?sort=price-desc&rgpu=6347,6658,7201,7202",
     ];
 
-    const pichauBot = await makePichauBuyBot({
-        botId: 0,
-    });
-
     // eslint-disable-next-line no-constant-condition
     while (true) {
         try {
+            const pichauBot = await makePichauBuyBot({
+                botId: 0,
+            });
             const products = await pichauBot.checkPagePrices(productsPageToCheck[0]);
             const result = await priceChecker(products);
             if (result.length > 0) {
                 await sendEmail(result);
             }
-            await awaitableTimeout(minutesToMilliseconds(randomNumber(8, 12)));
+            await awaitableTimeout(3000);
         } catch (e) {
             console.error("An error occurred while checking prices: ", e);
             await awaitableTimeout(minutesToMilliseconds(randomNumber(1, 3)));
