@@ -54,7 +54,7 @@ const sendEmail = async (result: HandleProductsResult) => {
 
     await transporter.sendMail({
         from: process.env.SMTP_USER,
-        to: process.env.SMTP_USER,
+        to: "mateus.rbossa@gmail.com",
         subject: "Pichau Bot - Price Change",
         html: html,
     });
