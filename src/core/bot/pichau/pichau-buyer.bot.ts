@@ -43,7 +43,8 @@ export class PichauPriceCheckerBot extends Bot implements PriceChecker {
             })
         );
 
-        await page.close();
+        await this.browser.close();
+        this.deleteDataDir();
 
         return productsData;
     }
