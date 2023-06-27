@@ -1,7 +1,6 @@
 /* eslint @typescript-eslint/no-floating-promises: 0 */
 import "dotenv/config";
 
-import nodemailer from "nodemailer";
 import { makePichauBuyBot } from "@core/bot/pichau/pichau-buyer-bot.factory";
 import { print_program_name } from "./helpers/program_name";
 import db, { findProductByName, insertProduct, updateProductByName } from "@data/db";
@@ -9,55 +8,9 @@ import { awaitableTimeout } from "@helpers/awaitable_timeout";
 import { minutesToMilliseconds } from "@helpers/time";
 import { randomNumber } from "@helpers/random";
 import { Product } from "@data/models/Product.model";
+import { generateEmailHTML, sendEmail } from "./email";
 
-type HandleProductsResult = Awaited<ReturnType<typeof handleProducts>>;
-
-const sendEmail = async (result: HandleProductsResult) => {
-    const transporter = nodemailer.createTransport({
-        host: process.env.SMTP_HOST,
-        port: Number(process.env.SMTP_PORT),
-        secure: true,
-        auth: {
-            user: process.env.SMTP_USER,
-            pass: process.env.SMTP_PASS,
-        },
-    });
-
-    const html = `
-        <h1>Price Change</h1>
-            <ul>
-                ${result
-                    .map((product) => {
-                        if ("priceChange" in product!) {
-                            return `<li>Product: ${product.product!.name} - Old Price: ${
-                                product.priceChange!.oldPrice
-                            } - New Price: ${product.priceChange!.newPrice} - URL: ${
-                                product.product!.url
-                            }</li>`;
-                        }
-                    })
-                    .join("")}
-            </ul>
-            <h1>New Products</h1>
-            <ul>
-                ${result
-                    .map((product) => {
-                        if ("newProduct" in product!) {
-                            return `<li>Product: ${product.newProduct!.name} - Price: ${
-                                product.newProduct!.price
-                            } - URL: ${product.newProduct!.url}</li>`;
-                        }
-                    })
-                    .join("")}
-            </ul>`;
-
-    await transporter.sendMail({
-        from: process.env.SMTP_USER,
-        to: "mateus.rbossa@gmail.com",
-        subject: "Pichau Bot - Price Change",
-        html: html,
-    });
-};
+export type HandleProductsResult = Awaited<ReturnType<typeof handleProducts>>;
 
 const handleProducts = async (scrapedProducts: Product[]) => {
     let result = await Promise.all(
