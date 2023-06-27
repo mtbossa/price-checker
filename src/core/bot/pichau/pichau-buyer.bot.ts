@@ -19,38 +19,33 @@ import { Product } from "@data/models/Product.model";
 puppeteer.use(StealthPlugin());
 
 export class PichauPriceCheckerBot extends Bot implements PriceChecker {
+    private readonly PRODUCT_PAGE_SELECTOR = "a[data-cy*='list-product']";
+
     async checkPagePrices(pageUrl: string): Promise<Product[]> {
-        const productsSelector = 'a[data-cy*="list-product"]';
-        try {
-            const page = await newPage(this.browser);
-            await navigateToURL(page, pageUrl);
+        const page = await newPage(this.browser);
+        await navigateToURL(page, pageUrl);
 
-            await page.waitForSelector(productsSelector);
-            const products = await page.$$(productsSelector);
+        await page.waitForSelector(this.PRODUCT_PAGE_SELECTOR);
+        const products = await page.$$(this.PRODUCT_PAGE_SELECTOR);
 
-            const productsData = await Promise.all(
-                products.map(async (product) => {
-                    const url = await page.evaluate((el) => el.href, product);
-                    const title = await product.$("h2");
-                    const name = await extractTextFromElement(title!);
+        const productsData = await Promise.all(
+            products.map(async (product) => {
+                const url = await page.evaluate((el) => el.href, product);
+                const title = await product.$("h2");
+                const name = await extractTextFromElement(title!);
 
-                    const avistaSpan = await product.$("span ::-p-text(à vista)");
-                    const avistaPrice =
-                        (await page.evaluate((el) => el?.nextSibling?.textContent, avistaSpan)) ??
-                        "0";
+                const avistaSpan = await product.$("span ::-p-text(à vista)");
+                const avistaPrice =
+                    (await page.evaluate((el) => el?.nextSibling?.textContent, avistaSpan)) ?? "0";
 
-                    const avistaPriceNumber = parseFloat(
-                        avistaPrice.replace(/[^0-9,-]/g, "").replace(",", ".")
-                    );
+                return new Product(name!, url, this.parsePrice(avistaPrice));
+            })
+        );
 
-                    return new Product(name!, url, avistaPriceNumber);
-                })
-            );
+        return productsData;
+    }
 
-            return productsData;
-        } catch (error) {
-            console.log(error);
-            return [];
-        }
+    private parsePrice(price: string): number {
+        return parseFloat(price.replace(/[^0-9,-]/g, "").replace(",", "."));
     }
 }

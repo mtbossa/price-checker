@@ -13,6 +13,10 @@ import { print_program_name } from "./helpers/program_name";
         botId: 0,
     });
 
-    const products = await pichauBot.checkPagePrices(productsPageToCheck[0]);
-    console.log(products);
+    try {
+        const products = await pichauBot.checkPagePrices(productsPageToCheck[0]);
+        console.log(products);
+    } catch (e) {
+        console.error(e);
+    }
 })();
