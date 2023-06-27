@@ -52,6 +52,7 @@
         "puppeteer-extra": "^3.3.6",
         "puppeteer-extra-plugin-stealth": "^2.11.2",
         "puppeteer-table-parser": "^2.1.0",
+        "sqlite3": "^5.1.6",
         "table": "^6.8.1"
     }
 }
