@@ -1,7 +1,7 @@
 /* eslint @typescript-eslint/no-floating-promises: 0 */
 import { makePichauBuyBot } from "@core/bot/pichau/pichau-buyer-bot.factory";
 import { print_program_name } from "./helpers/program_name";
-import db from "@data/db";
+import db, { findProductByName, insertProduct, storesIds, updateProductByName } from "@data/db";
 
 (async () => {
     print_program_name();
@@ -16,11 +16,23 @@ import db from "@data/db";
 
     try {
         const products = await pichauBot.checkPagePrices(productsPageToCheck[0]);
-        console.log(products);
+        await Promise.all(
+            products.map(async (scrapedProduct) => {
+                const foundProduct = await findProductByName(scrapedProduct.name);
+                if (!foundProduct) {
+                    insertProduct(scrapedProduct, scrapedProduct.store_id);
+                    console.log(`New product found: ${scrapedProduct.name}!`);
+                    return;
+                }
 
-        db.each("SELECT * FROM stores", (err, row) => {
-            console.log(row);
-        });
+                if (foundProduct.price !== scrapedProduct.price) {
+                    console.log(
+                        `Price of product ${scrapedProduct.name} changed from ${foundProduct.price} to ${scrapedProduct.price}!`
+                    );
+                    updateProductByName(scrapedProduct.name, scrapedProduct);
+                }
+            })
+        );
     } catch (e) {
         console.error(e);
     }

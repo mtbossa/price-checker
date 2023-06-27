@@ -15,6 +15,7 @@ import chalk from "chalk";
 import { Bot } from "../bot";
 import { PriceChecker } from "../price-checker";
 import { Product } from "@data/models/Product.model";
+import { storesIds } from "@data/db";
 
 puppeteer.use(StealthPlugin());
 
@@ -38,7 +39,7 @@ export class PichauPriceCheckerBot extends Bot implements PriceChecker {
                 const avistaPrice =
                     (await page.evaluate((el) => el?.nextSibling?.textContent, avistaSpan)) ?? "0";
 
-                return new Product(name!, url, this.parsePrice(avistaPrice));
+                return new Product(name!, url, this.parsePrice(avistaPrice), storesIds["Pichau"]);
             })
         );
 
