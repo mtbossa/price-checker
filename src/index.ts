@@ -10,8 +10,4 @@ import { liveURLHandler } from "@core/cli/handlers/live-url.handler";
 
 (async () => {
     print_program_name();
-
-    const response = await prompts(liveURLPrompt);
-
-    liveURLHandler(response);
 })();
