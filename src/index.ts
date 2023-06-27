@@ -33,7 +33,9 @@ import { Product } from "@data/models/Product.model";
                             newPrice: scrapedProduct.price,
                         },
                     };
-                } else {
+                }
+
+                if (!foundProduct) {
                     insertProduct(scrapedProduct, scrapedProduct.store_id);
                     console.log(`New product found: ${scrapedProduct.name}!`);
                 }

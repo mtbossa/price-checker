@@ -3,7 +3,7 @@ import { Product } from "./models/Product.model";
 
 type AvalilableStores = "Pichau" | "Kabum" | "Terabyte";
 
-const db = new sqlite3.Database(":memory:");
+const db = new sqlite3.Database("db.sqlite");
 
 export const storesIds: Record<AvalilableStores, number> = {
     Pichau: 1,
@@ -12,14 +12,14 @@ export const storesIds: Record<AvalilableStores, number> = {
 };
 
 db.serialize(() => {
-    db.run("CREATE TABLE stores (name TEXT UNIQUE)");
+    db.run("CREATE TABLE IF NOT EXISTS stores (name TEXT UNIQUE)");
 
     Object.entries(storesIds).forEach(([store, id]) => {
-        db.run(`INSERT INTO stores VALUES ('${store}')`);
+        db.run(`INSERT OR IGNORE INTO stores VALUES ('${store}')`);
     });
 
     db.run(
-        "CREATE TABLE products (name TEXT UNIQUE, price REAL, url TEXT UNIQUE, store_id INTEGER NOT NULL, FOREIGN KEY (store_id) REFERENCES stores (rowid))"
+        "CREATE TABLE IF NOT EXISTS products (name TEXT UNIQUE, price REAL, url TEXT UNIQUE, store_id INTEGER NOT NULL, FOREIGN KEY (store_id) REFERENCES stores (rowid))"
     );
 });
 

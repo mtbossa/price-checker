@@ -8,3 +8,4 @@ dist/*
 *.map
 tmp/*
 .puppeteerrc.json
+*.sqlite
