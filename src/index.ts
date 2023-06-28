@@ -52,6 +52,7 @@ process.on("SIGINT", function () {
 
                     const result = await priceChecker(products);
                     if (result.length > 0) {
+                        logger.info("Found new results, sending email...");
                         await sendEmail(result, store);
                     }
 
