@@ -64,7 +64,7 @@ process.on("SIGINT", function () {
             );
 
             const minutes = randomNumber(8, 12);
-            logger.info(`Waiting ${minutes}min...`);
+            logger.info(`Waiting ${minutes} minutes...`);
             await awaitableTimeout(minutesToMilliseconds(minutes));
             bots.forEach((bot) => {
                 bot.deleteDataDir();
@@ -73,7 +73,7 @@ process.on("SIGINT", function () {
         } catch (e) {
             logger.error("An error occurred while checking prices: ", e);
             const minutes = randomNumber(1, 3);
-            logger.info(`Waiting ${minutes}min to try again...`);
+            logger.info(`Waiting ${minutes} minutes to try again...`);
             await awaitableTimeout(minutesToMilliseconds(minutes));
         }
     }
