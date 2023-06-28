@@ -31,6 +31,7 @@ process.on("SIGINT", function () {
     // eslint-disable-next-line no-constant-condition
     while (true) {
         try {
+            logger.info("Checking prices...");
             const bots = await Promise.all(
                 availableStores.map(async (store: AvalilableStores) => {
                     let bot: PichauPriceCheckerBot | KabumPriceCheckerBot;
@@ -58,14 +59,18 @@ process.on("SIGINT", function () {
                 })
             );
 
-            await awaitableTimeout(minutesToMilliseconds(randomNumber(8, 12)));
+            const minutes = randomNumber(8, 12);
+            logger.info(`Waiting ${minutes}min...`);
+            await awaitableTimeout(minutesToMilliseconds(minutes));
             bots.forEach((bot) => {
                 bot.deleteDataDir();
             });
-            await awaitableTimeout(5000);
+            await awaitableTimeout(2000);
         } catch (e) {
-            console.error("An error occurred while checking prices: ", e);
-            await awaitableTimeout(minutesToMilliseconds(randomNumber(1, 3)));
+            logger.error("An error occurred while checking prices: ", e);
+            const minutes = randomNumber(1, 3);
+            logger.info(`Waiting ${minutes}min to try again...`);
+            await awaitableTimeout(minutesToMilliseconds(minutes));
         }
     }
 })();
