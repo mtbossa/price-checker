@@ -1,6 +1,5 @@
 /* eslint @typescript-eslint/no-floating-promises: 0 */
 import "dotenv/config";
-import "module-alias/register";
 
 import logger from "./logger";
 import { makePichauBuyBot } from "@core/bot/pichau/pichau-buyer-bot.factory";
@@ -10,9 +9,7 @@ import { minutesToMilliseconds } from "@helpers/time";
 import { randomNumber } from "@helpers/random";
 import { sendEmail } from "./email";
 import { priceChecker } from "./price-checker";
-import { AvalilableStores, storesIds } from "@data/db";
-import { Bot } from "@core/bot/bot";
-import { PriceChecker } from "@core/bot/price-checker";
+import { AvalilableStores } from "@data/db";
 import { makeKabumBuyBot } from "@core/bot/kabum/kabum-bot.factory";
 import { PichauPriceCheckerBot } from "@core/bot/pichau/pichau-buyer.bot";
 import { KabumPriceCheckerBot } from "@core/bot/kabum/kabum-buyer.bot";

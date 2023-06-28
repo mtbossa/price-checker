@@ -12,7 +12,7 @@ export const makePichauBuyBot = async (config: PichauBuyerBotConfig) => {
     const launchOptions = getLaunchOptions(config.botId);
     const browser = await launchBrowser(launchOptions);
 
-    return new PichauPriceCheckerBot(config.botId, browser, config.productsUrl);
+    return new PichauPriceCheckerBot(config.botId, "PichauBOT", browser, config.productsUrl);
 };
 
 const getLaunchOptions = (botId: number): PuppeteerLaunchOptions => {

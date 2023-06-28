@@ -12,7 +12,7 @@ export const makeKabumBuyBot = async (config: KabumBuyerBotConfig) => {
     const launchOptions = getLaunchOptions(config.botId);
     const browser = await launchBrowser(launchOptions);
 
-    return new KabumPriceCheckerBot(config.botId, browser, config.productsUrl);
+    return new KabumPriceCheckerBot(config.botId, "KabumBOT", browser, config.productsUrl);
 };
 
 const getLaunchOptions = (botId: number): PuppeteerLaunchOptions => {

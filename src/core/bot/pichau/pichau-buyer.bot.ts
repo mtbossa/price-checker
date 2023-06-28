@@ -6,6 +6,9 @@ import {
     newPage,
     waitForText,
 } from "@helpers/bot";
+import { Logger } from "pino";
+
+import logger from "src/logger";
 import { Browser, ElementHandle, Page, PuppeteerLaunchOptions } from "puppeteer";
 import puppeteer from "puppeteer-extra";
 import { TimeoutError } from "puppeteer";
@@ -25,14 +28,17 @@ export class PichauPriceCheckerBot extends Bot implements PriceChecker {
 
     constructor(
         public readonly id: number,
+        public readonly name: string,
         protected readonly browser: Browser,
         productsPage: string
     ) {
-        super(id, browser);
+        super(id, name, browser);
         this.productsPage = productsPage;
     }
 
     async checkPagePrices(): Promise<Product[]> {
+        this.logger.info("Checking page prices");
+
         const page = await newPage(this.browser);
         await navigateToURL(page, this.productsPage);
 
