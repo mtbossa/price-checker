@@ -49,8 +49,6 @@ export class KabumPriceCheckerBot extends Bot implements PriceChecker {
                 const title = await product.$eval("span.nameCard", (el) => el.textContent);
                 const price = await product.$eval("span.priceCard", (el) => el.textContent);
 
-                const test = this.parsePrice(price!);
-
                 return new Product(title!, url, this.parsePrice(price!), storesIds["Kabum"]);
             })
         );
