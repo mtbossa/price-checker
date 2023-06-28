@@ -75,10 +75,12 @@ export const sendEmail = async (result: PriceCheckerResult, store: AvalilableSto
 
     const html = generateEmailHTML(result, store);
 
+    const serverName = process.env.SERVER_NAME ?? "NONE";
+
     await transporter.sendMail({
         from: process.env.SMTP_USER,
         to: "mateus.rbossa@gmail.com",
-        subject: "Price Change bot",
+        subject: `[ ${serverName} ] Price Change bot`,
         html: html,
     });
 };
