@@ -14,6 +14,11 @@ import { AvalilableStores } from "@data/db";
 import { makeKabumBuyBot } from "@core/bot/kabum/kabum-bot.factory";
 import { PichauPriceCheckerBot } from "@core/bot/pichau/pichau-buyer.bot";
 import { KabumPriceCheckerBot } from "@core/bot/kabum/kabum-buyer.bot";
+import {
+    TerabyteBuyerBotConfig,
+    makeTerabyteBuyBot,
+} from "./core/bot/terabyte/terabyte-bot.factory";
+import { TerabytePriceCheckerBot } from "./core/bot/terabyte/terabyte-buyer.bot";
 
 process.on("SIGINT", function () {
     console.log("\nGracefully shutting down from SIGINT (Ctrl-C)");
@@ -24,26 +29,32 @@ process.on("SIGINT", function () {
 (async () => {
     print_program_name();
 
-    const availableStores: AvalilableStores[] = ["Kabum", "Pichau"];
+    const availableStores: AvalilableStores[] = ["Pichau", "Kabum", "Terabyte"];
 
     // eslint-disable-next-line no-constant-condition
     while (true) {
         try {
             logger.info("Checking prices...");
             const bots = await Promise.all(
-                availableStores.map(async (store: AvalilableStores) => {
-                    let bot: PichauPriceCheckerBot | KabumPriceCheckerBot;
+                availableStores.map(async (store: AvalilableStores, index: number) => {
+                    let bot: PichauPriceCheckerBot | KabumPriceCheckerBot | TerabytePriceCheckerBot;
                     if (store === "Pichau") {
                         bot = await makePichauBuyBot({
-                            botId: 0,
+                            botId: index,
                             productsUrl:
                                 "https://www.pichau.com.br/hardware/placa-de-video?sort=price-desc&rgpu=6347,6658,7201,7202",
                         });
                     } else if (store === "Kabum") {
                         bot = await makeKabumBuyBot({
-                            botId: 1,
+                            botId: index,
                             productsUrl:
                                 "https://www.kabum.com.br/hardware/placa-de-video-vga/placa-de-video-amd?page_number=1&page_size=20&facet_filters=eyJSYWRlb24gUlggU8OpcmllIDYwMDAiOlsiUlggNzkwMCBYVCIsIlJYIDc5MDAiLCJSWCA2OTUwIFhUIiwiUlggNjkwMCBYVCJdfQ==&sort=-price",
+                        });
+                    } else if (store === "Terabyte") {
+                        bot = await makeTerabyteBuyBot({
+                            botId: index,
+                            productsUrl:
+                                "https://www.terabyteshop.com.br/hardware/placas-de-video/amd-radeon",
                         });
                     }
                     const products = await bot!.checkPagePrices();

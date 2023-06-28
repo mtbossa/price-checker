@@ -1,13 +1,14 @@
 import sqlite3 from "sqlite3";
 import { Product } from "./models/Product.model";
 
-export type AvalilableStores = "Pichau" | "Kabum";
+export type AvalilableStores = "Pichau" | "Kabum" | "Terabyte";
 
 const db = new sqlite3.Database("db.sqlite");
 
 export const storesIds: Record<AvalilableStores, number> = {
     Pichau: 1,
     Kabum: 2,
+    Terabyte: 2,
 };
 
 db.serialize(() => {
