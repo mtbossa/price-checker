@@ -2,6 +2,7 @@
 import "dotenv/config";
 import "module-alias/register";
 
+import logger from "./logger";
 import { makePichauBuyBot } from "@core/bot/pichau/pichau-buyer-bot.factory";
 import { print_program_name } from "./helpers/program_name";
 import { awaitableTimeout } from "@helpers/awaitable_timeout";
