@@ -1,18 +1,18 @@
 import { PuppeteerLaunchOptions } from "puppeteer";
 import { launchBrowser } from "@helpers/bot";
-import { PichauPriceCheckerBot } from "./pichau-buyer.bot";
+import { KabumPriceCheckerBot } from "./kabum-buyer.bot";
 import { Bot } from "../bot";
 
-export interface PichauBuyerBotConfig {
+export interface KabumBuyerBotConfig {
     botId: number;
     productsUrl: string;
 }
 
-export const makePichauBuyBot = async (config: PichauBuyerBotConfig) => {
+export const makeKabumBuyBot = async (config: KabumBuyerBotConfig) => {
     const launchOptions = getLaunchOptions(config.botId);
     const browser = await launchBrowser(launchOptions);
 
-    return new PichauPriceCheckerBot(config.botId, browser, config.productsUrl);
+    return new KabumPriceCheckerBot(config.botId, browser, config.productsUrl);
 };
 
 const getLaunchOptions = (botId: number): PuppeteerLaunchOptions => {

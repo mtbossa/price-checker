@@ -19,8 +19,9 @@ import { storesIds } from "@data/db";
 
 puppeteer.use(StealthPlugin());
 
-export class PichauPriceCheckerBot extends Bot implements PriceChecker {
-    private readonly PRODUCT_PAGE_SELECTOR = "a[data-cy*='list-product']";
+export class KabumPriceCheckerBot extends Bot implements PriceChecker {
+    private readonly PRODUCT_PAGE_SELECTOR = "div.productCard";
+
     productsPage: string;
 
     constructor(
@@ -41,15 +42,13 @@ export class PichauPriceCheckerBot extends Bot implements PriceChecker {
 
         const productsData = await Promise.all(
             products.map(async (product) => {
-                const url = await page.evaluate((el) => el.href, product);
-                const title = await product.$("h2");
-                const name = await extractTextFromElement(title!);
+                const url = await product.$eval("a", (el) => el.href);
+                const title = await product.$eval("span.nameCard", (el) => el.textContent);
+                const price = await product.$eval("span.priceCard", (el) => el.textContent);
 
-                const avistaSpan = await product.$("span ::-p-text(à vista)");
-                const avistaPrice =
-                    (await page.evaluate((el) => el?.nextSibling?.textContent, avistaSpan)) ?? "0";
+                const test = this.parsePrice(price!);
 
-                return new Product(name!, url, this.parsePrice(avistaPrice), storesIds["Pichau"]);
+                return new Product(title!, url, this.parsePrice(price!), storesIds["Kabum"]);
             })
         );
 
@@ -60,6 +59,12 @@ export class PichauPriceCheckerBot extends Bot implements PriceChecker {
     }
 
     private parsePrice(price: string): number {
-        return parseFloat(price.replace(/[^0-9,-]/g, "").replace(",", "."));
+        const parsed = parseFloat(price.replace(/[^0-9,-]/g, "").replace(",", "."));
+
+        if (isNaN(parsed)) {
+            return 0;
+        }
+
+        return parsed;
     }
 }
