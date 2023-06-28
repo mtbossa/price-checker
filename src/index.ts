@@ -20,6 +20,30 @@ process.on("SIGINT", function () {
     process.exit(0);
 });
 
+const getBot = async (store: AvalilableStores, botId: number) => {
+    switch (store) {
+        case "Pichau":
+            return makePichauBot({
+                botId: botId,
+                productsUrl:
+                    "https://www.pichau.com.br/hardware/placa-de-video?sort=price-desc&rgpu=6347,6658,7201,7202",
+            });
+        case "Kabum":
+            return makeKabumBot({
+                botId: botId,
+                productsUrl:
+                    "https://www.kabum.com.br/hardware/placa-de-video-vga/placa-de-video-amd?page_number=1&page_size=20&facet_filters=eyJSYWRlb24gUlggU8OpcmllIDYwMDAiOlsiUlggNzkwMCBYVCIsIlJYIDc5MDAiLCJSWCA2OTUwIFhUIiwiUlggNjkwMCBYVCJdfQ==&sort=-price",
+            });
+        case "Terabyte":
+            return makeTerabyteBot({
+                botId: botId,
+                productsUrl: "https://www.terabyteshop.com.br/hardware/placas-de-video/amd-radeon",
+            });
+        default:
+            throw new Error("Invalid store");
+    }
+};
+
 (async () => {
     print_program_name();
 
@@ -29,51 +53,42 @@ process.on("SIGINT", function () {
     while (true) {
         try {
             logger.info("Checking prices...");
-            const bots = await Promise.all(
-                availableStores.map(async (store: AvalilableStores, index: number) => {
-                    let bot: PichauPriceCheckerBot | KabumPriceCheckerBot | TerabytePriceCheckerBot;
-                    if (store === "Pichau") {
-                        bot = await makePichauBot({
-                            botId: index,
-                            productsUrl:
-                                "https://www.pichau.com.br/hardware/placa-de-video?sort=price-desc&rgpu=6347,6658,7201,7202",
-                        });
-                    } else if (store === "Kabum") {
-                        bot = await makeKabumBot({
-                            botId: index,
-                            productsUrl:
-                                "https://www.kabum.com.br/hardware/placa-de-video-vga/placa-de-video-amd?page_number=1&page_size=20&facet_filters=eyJSYWRlb24gUlggU8OpcmllIDYwMDAiOlsiUlggNzkwMCBYVCIsIlJYIDc5MDAiLCJSWCA2OTUwIFhUIiwiUlggNjkwMCBYVCJdfQ==&sort=-price",
-                        });
-                    } else if (store === "Terabyte") {
-                        bot = await makeTerabyteBot({
-                            botId: index,
-                            productsUrl:
-                                "https://www.terabyteshop.com.br/hardware/placas-de-video/amd-radeon",
-                        });
-                    }
-                    const products = await bot!.checkPagePrices();
 
-                    const result = await priceChecker(products);
-                    if (result.length > 0) {
-                        logger.info("Found new results, sending email...");
-                        await sendEmail(result, store);
-                    }
+            const bots: (PichauPriceCheckerBot | KabumPriceCheckerBot | TerabytePriceCheckerBot)[] =
+                [];
 
-                    return bot!;
-                })
-            );
+            for (const [index, store] of availableStores.entries()) {
+                logger.info(`Checking ${store}...`);
+
+                const bot = await getBot(store, index);
+                const products = await bot.checkPagePrices();
+
+                const result = await priceChecker(products);
+                if (result.length > 0) {
+                    logger.info("Found new results, sending email...");
+                    await sendEmail(result, store);
+                }
+
+                bots.push(bot);
+            }
 
             const minutes = randomNumber(8, 12);
             logger.info(`Waiting ${minutes} minutes...`);
+
             await awaitableTimeout(minutesToMilliseconds(minutes));
+
             bots.forEach((bot) => {
                 bot.deleteDataDir();
             });
+
             await awaitableTimeout(2000);
         } catch (e) {
             logger.error("An error occurred while checking prices: ", e);
+
             const minutes = randomNumber(1, 3);
+
             logger.info(`Waiting ${minutes} minutes to try again...`);
+
             await awaitableTimeout(minutesToMilliseconds(minutes));
         }
     }
