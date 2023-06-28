@@ -15,6 +15,12 @@ import { makeKabumBuyBot } from "@core/bot/kabum/kabum-bot.factory";
 import { PichauPriceCheckerBot } from "@core/bot/pichau/pichau-buyer.bot";
 import { KabumPriceCheckerBot } from "@core/bot/kabum/kabum-buyer.bot";
 
+process.on("SIGINT", function () {
+    console.log("\nGracefully shutting down from SIGINT (Ctrl-C)");
+    // some other closing procedures go here
+    process.exit(0);
+});
+
 (async () => {
     print_program_name();
 
