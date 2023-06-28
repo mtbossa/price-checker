@@ -11,7 +11,7 @@ export abstract class Bot {
     constructor(
         public readonly id: number,
         public readonly name: string,
-        protected readonly browser: Browser
+        protected browser: Browser | null
     ) {
         this.logger = logger.child({ botName: name, botId: id });
     }
@@ -24,5 +24,13 @@ export abstract class Bot {
     static getDataDir(id: number) {
         const dataDirPath = path.join(config.dataDirPath, `bot-${id}`);
         return dataDirPath;
+    }
+
+    async closeBrowser() {
+        if (!this.browser) return;
+
+        this.logger.info("Closing browser");
+        await this.browser.close();
+        this.browser = null;
     }
 }

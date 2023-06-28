@@ -53,7 +53,7 @@ export class KabumPriceCheckerBot extends Bot implements PriceChecker {
             })
         );
 
-        await this.browser.close();
+        await this.closeBrowser();
 
         return productsData;
     }
