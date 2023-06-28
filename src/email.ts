@@ -78,7 +78,7 @@ export const sendEmail = async (result: PriceCheckerResult, store: AvalilableSto
     await transporter.sendMail({
         from: process.env.SMTP_USER,
         to: "mateus.rbossa@gmail.com",
-        subject: "Pichau Bot - Price Change",
+        subject: "Price Change bot",
         html: html,
     });
 };
