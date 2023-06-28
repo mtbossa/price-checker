@@ -1,6 +1,6 @@
 import { PuppeteerLaunchOptions } from "puppeteer";
 import { launchBrowser } from "@helpers/bot";
-import { KabumPriceCheckerBot } from "./kabum-buyer.bot";
+import { KabumPriceCheckerBot } from "./kabum-price-checker.bot";
 import { Bot } from "../bot";
 
 export interface KabumBuyerBotConfig {
@@ -8,7 +8,7 @@ export interface KabumBuyerBotConfig {
     productsUrl: string;
 }
 
-export const makeKabumBuyBot = async (config: KabumBuyerBotConfig) => {
+export const makeKabumBot = async (config: KabumBuyerBotConfig) => {
     const launchOptions = getLaunchOptions(config.botId);
     const browser = await launchBrowser(launchOptions);
 

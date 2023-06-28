@@ -1,6 +1,6 @@
 import { PuppeteerLaunchOptions } from "puppeteer";
 import { launchBrowser } from "@helpers/bot";
-import { PichauPriceCheckerBot } from "./pichau-buyer.bot";
+import { PichauPriceCheckerBot } from "./pichau-price-checker.bot";
 import { Bot } from "../bot";
 
 export interface PichauBuyerBotConfig {
@@ -8,7 +8,7 @@ export interface PichauBuyerBotConfig {
     productsUrl: string;
 }
 
-export const makePichauBuyBot = async (config: PichauBuyerBotConfig) => {
+export const makePichauBot = async (config: PichauBuyerBotConfig) => {
     const launchOptions = getLaunchOptions(config.botId);
     const browser = await launchBrowser(launchOptions);
 

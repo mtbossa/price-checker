@@ -1,6 +1,6 @@
 import { PuppeteerLaunchOptions } from "puppeteer";
 import { launchBrowser } from "@helpers/bot";
-import { TerabytePriceCheckerBot } from "./terabyte-buyer.bot";
+import { TerabytePriceCheckerBot } from "./terabyte-price-checker.bot";
 import { Bot } from "../bot";
 
 export interface TerabyteBuyerBotConfig {
@@ -8,7 +8,7 @@ export interface TerabyteBuyerBotConfig {
     productsUrl: string;
 }
 
-export const makeTerabyteBuyBot = async (config: TerabyteBuyerBotConfig) => {
+export const makeTerabyteBot = async (config: TerabyteBuyerBotConfig) => {
     const launchOptions = getLaunchOptions(config.botId);
     const browser = await launchBrowser(launchOptions);
 

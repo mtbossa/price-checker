@@ -3,7 +3,6 @@ import "dotenv/config";
 import "./utils/module-aliases";
 
 import logger from "./logger";
-import { makePichauBuyBot } from "@core/bot/pichau/pichau-buyer-bot.factory";
 import { print_program_name } from "./helpers/program_name";
 import { awaitableTimeout } from "@helpers/awaitable_timeout";
 import { minutesToMilliseconds } from "@helpers/time";
@@ -11,14 +10,9 @@ import { randomNumber } from "@helpers/random";
 import { sendEmail } from "./email";
 import { priceChecker } from "./price-checker";
 import { AvalilableStores } from "@data/db";
-import { makeKabumBuyBot } from "@core/bot/kabum/kabum-bot.factory";
-import { PichauPriceCheckerBot } from "@core/bot/pichau/pichau-buyer.bot";
-import { KabumPriceCheckerBot } from "@core/bot/kabum/kabum-buyer.bot";
-import {
-    TerabyteBuyerBotConfig,
-    makeTerabyteBuyBot,
-} from "./core/bot/terabyte/terabyte-bot.factory";
-import { TerabytePriceCheckerBot } from "./core/bot/terabyte/terabyte-buyer.bot";
+import { PichauPriceCheckerBot, makePichauBot } from "@core/bot/pichau";
+import { KabumPriceCheckerBot, makeKabumBot } from "@core/bot/kabum";
+import { TerabytePriceCheckerBot, makeTerabyteBot } from "@core/bot/terabyte";
 
 process.on("SIGINT", function () {
     console.log("\nGracefully shutting down from SIGINT (Ctrl-C)");
@@ -39,19 +33,19 @@ process.on("SIGINT", function () {
                 availableStores.map(async (store: AvalilableStores, index: number) => {
                     let bot: PichauPriceCheckerBot | KabumPriceCheckerBot | TerabytePriceCheckerBot;
                     if (store === "Pichau") {
-                        bot = await makePichauBuyBot({
+                        bot = await makePichauBot({
                             botId: index,
                             productsUrl:
                                 "https://www.pichau.com.br/hardware/placa-de-video?sort=price-desc&rgpu=6347,6658,7201,7202",
                         });
                     } else if (store === "Kabum") {
-                        bot = await makeKabumBuyBot({
+                        bot = await makeKabumBot({
                             botId: index,
                             productsUrl:
                                 "https://www.kabum.com.br/hardware/placa-de-video-vga/placa-de-video-amd?page_number=1&page_size=20&facet_filters=eyJSYWRlb24gUlggU8OpcmllIDYwMDAiOlsiUlggNzkwMCBYVCIsIlJYIDc5MDAiLCJSWCA2OTUwIFhUIiwiUlggNjkwMCBYVCJdfQ==&sort=-price",
                         });
                     } else if (store === "Terabyte") {
-                        bot = await makeTerabyteBuyBot({
+                        bot = await makeTerabyteBot({
                             botId: index,
                             productsUrl:
                                 "https://www.terabyteshop.com.br/hardware/placas-de-video/amd-radeon",
