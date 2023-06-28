@@ -12,18 +12,20 @@ import { AvalilableStores, storesIds } from "@data/db";
 import { Bot } from "@core/bot/bot";
 import { PriceChecker } from "@core/bot/price-checker";
 import { makeKabumBuyBot } from "@core/bot/kabum/kabum-bot.factory";
+import { PichauPriceCheckerBot } from "@core/bot/pichau/pichau-buyer.bot";
+import { KabumPriceCheckerBot } from "@core/bot/kabum/kabum-buyer.bot";
 
 (async () => {
     print_program_name();
 
-    const bots: AvalilableStores[] = ["Kabum", "Pichau"];
+    const availableStores: AvalilableStores[] = ["Kabum", "Pichau"];
 
     // eslint-disable-next-line no-constant-condition
     while (true) {
         try {
-            await Promise.all(
-                bots.map(async (store: AvalilableStores) => {
-                    let bot: PriceChecker;
+            const bots = await Promise.all(
+                availableStores.map(async (store: AvalilableStores) => {
+                    let bot: PichauPriceCheckerBot | KabumPriceCheckerBot;
                     if (store === "Pichau") {
                         bot = await makePichauBuyBot({
                             botId: 0,
@@ -43,10 +45,16 @@ import { makeKabumBuyBot } from "@core/bot/kabum/kabum-bot.factory";
                     if (result.length > 0) {
                         await sendEmail(result, store);
                     }
+
+                    return bot!;
                 })
             );
 
             await awaitableTimeout(minutesToMilliseconds(randomNumber(8, 12)));
+            bots.forEach((bot) => {
+                bot.deleteDataDir();
+            });
+            await awaitableTimeout(5000);
         } catch (e) {
             console.error("An error occurred while checking prices: ", e);
             await awaitableTimeout(minutesToMilliseconds(randomNumber(1, 3)));

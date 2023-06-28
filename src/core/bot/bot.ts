@@ -5,9 +5,10 @@ import config from "@config";
 import { Browser } from "puppeteer";
 
 export abstract class Bot {
-    constructor(protected readonly id: number, protected readonly browser: Browser) {}
+    constructor(public readonly id: number, protected readonly browser: Browser) {}
 
-    protected deleteDataDir() {
+    deleteDataDir() {
+        console.log(`Deleting data dir for bot ${this.id}`);
         fs.rmSync(Bot.getDataDir(this.id), { recursive: true, force: true });
     }
 

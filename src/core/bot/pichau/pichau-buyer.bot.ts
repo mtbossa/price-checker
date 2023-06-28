@@ -24,7 +24,7 @@ export class PichauPriceCheckerBot extends Bot implements PriceChecker {
     productsPage: string;
 
     constructor(
-        protected readonly id: number,
+        public readonly id: number,
         protected readonly browser: Browser,
         productsPage: string
     ) {
@@ -54,7 +54,6 @@ export class PichauPriceCheckerBot extends Bot implements PriceChecker {
         );
 
         await this.browser.close();
-        this.deleteDataDir();
 
         return productsData;
     }
