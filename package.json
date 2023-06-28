@@ -61,12 +61,5 @@
         "puppeteer-table-parser": "^2.1.0",
         "sqlite3": "^5.1.6",
         "table": "^6.8.1"
-    },
-    "_moduleAliases": {
-        "@core": "dist/src/core",
-        "@data": "dist/src/data",
-        "@models": "dist/src/data/models",
-        "@helpers": "dist/src/helpers",
-        "@config": "dist/src/config"
     }
 }

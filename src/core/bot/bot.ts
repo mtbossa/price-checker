@@ -4,7 +4,7 @@ import { Browser } from "puppeteer";
 import { Logger } from "pino";
 
 import config from "@config";
-import logger from "src/logger";
+import logger from "@root/logger";
 
 export abstract class Bot {
     protected readonly logger: Logger;

@@ -1,5 +1,6 @@
 /* eslint @typescript-eslint/no-floating-promises: 0 */
 import "dotenv/config";
+import "./utils/module-aliases";
 
 import logger from "./logger";
 import { makePichauBuyBot } from "@core/bot/pichau/pichau-buyer-bot.factory";

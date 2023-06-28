@@ -13,6 +13,7 @@
         "strict": true,
         "skipLibCheck": true,
         "paths": {
+            "@root/*": ["./src/*"],
             "@core/*": ["./src/core/*"],
             "@data/*": ["./src/data/*"],
             "@models/*": ["./src/data/models/*"],
@@ -20,6 +21,6 @@
             "@config": ["./src/config"]
         }
     },
-    "exclude": ["node_modules"],
-    "include": ["src/**/*.ts", "prisma/*.ts"]
+    "exclude": ["node_modules", "dist"],
+    "include": ["src/**/*.ts"]
 }
