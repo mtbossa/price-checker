@@ -83,7 +83,7 @@ export const sendEmail = async (html: string, subject: string) => {
 
 export const makePriceChangeEmail = (result: PriceCheckerResult, store: AvalilableStores) => {
     const html = generateEmailHTML(result, store);
-    const subject = `[ ${process.env.SERVER_NAME ?? "NONE"} ] Price Change bot`;
+    const subject = `[ ${process.env.SERVER_NAME ?? "DEV"} ] Price Change bot`;
 
     return {
         html,
