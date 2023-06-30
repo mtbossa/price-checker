@@ -83,7 +83,8 @@ const getBot = async (store: AvalilableStores, botId: number) => {
 
             await awaitableTimeout(2000);
         } catch (e) {
-            logger.error("An error occurred while checking prices: ", e);
+            logger.error("An error occurred while checking prices");
+            console.error(e);
 
             const minutes = randomNumber(1, 3);
 
