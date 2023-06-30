@@ -49,14 +49,11 @@ const getBot = async (store: AvalilableStores, botId: number) => {
 
     const availableStores: AvalilableStores[] = ["Pichau", "Kabum", "Terabyte"];
     let errors = 0;
-
+    const bots: (PichauPriceCheckerBot | KabumPriceCheckerBot | TerabytePriceCheckerBot)[] = [];
     // eslint-disable-next-line no-constant-condition
     while (true) {
         try {
             logger.info("Checking prices...");
-
-            const bots: (PichauPriceCheckerBot | KabumPriceCheckerBot | TerabytePriceCheckerBot)[] =
-                [];
 
             for (const [index, store] of availableStores.entries()) {
                 logger.info(`Checking ${store}...`);
@@ -76,14 +73,7 @@ const getBot = async (store: AvalilableStores, botId: number) => {
 
             const minutes = randomNumber(8, 12);
             logger.info(`Waiting ${minutes} minutes...`);
-
             await awaitableTimeout(minutesToMilliseconds(minutes));
-
-            bots.forEach((bot) => {
-                bot.deleteDataDir();
-            });
-
-            await awaitableTimeout(2000);
         } catch (e) {
             errors++;
 
@@ -100,6 +90,10 @@ const getBot = async (store: AvalilableStores, botId: number) => {
             logger.info(`Waiting ${minutes} minutes to try again...`);
 
             await awaitableTimeout(minutesToMilliseconds(minutes));
+        } finally {
+            bots.forEach((bot) => {
+                bot.deleteDataDir();
+            });
         }
     }
 })();
