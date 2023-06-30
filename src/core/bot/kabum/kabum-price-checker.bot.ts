@@ -35,25 +35,33 @@ export class KabumPriceCheckerBot extends Bot implements PriceChecker {
     }
 
     async checkPagePrices(): Promise<Product[]> {
-        this.logger.info("Checking page prices");
+        let productsData: Product[] = [];
 
-        const page = await newPage(this.browser);
-        await navigateToURL(page, this.productsPage);
+        try {
+            this.logger.info("Checking page prices");
 
-        await page.waitForSelector(this.PRODUCT_PAGE_SELECTOR);
-        const products = await page.$$(this.PRODUCT_PAGE_SELECTOR);
+            const page = await newPage(this.browser);
+            await navigateToURL(page, this.productsPage);
 
-        const productsData = await Promise.all(
-            products.map(async (product) => {
-                const url = await product.$eval("a", (el) => el.href);
-                const title = await product.$eval("span.nameCard", (el) => el.textContent);
-                const price = await product.$eval("span.priceCard", (el) => el.textContent);
+            await page.waitForSelector(this.PRODUCT_PAGE_SELECTOR);
+            const products = await page.$$(this.PRODUCT_PAGE_SELECTOR);
 
-                return new Product(title!, url, this.parsePrice(price!), storesIds["Kabum"]);
-            })
-        );
+            productsData = await Promise.all(
+                products.map(async (product) => {
+                    const url = await product.$eval("a", (el) => el.href);
+                    const title = await product.$eval("span.nameCard", (el) => el.textContent);
+                    const price = await product.$eval("span.priceCard", (el) => el.textContent);
 
-        await this.closeBrowser();
+                    return new Product(title!, url, this.parsePrice(price!), storesIds["Kabum"]);
+                })
+            );
+        } catch (error) {
+            this.logger.error("Error occurred while checking page prices in Kabum");
+            this.logger.error(error);
+            throw error;
+        } finally {
+            await this.closeBrowser();
+        }
 
         return productsData;
     }

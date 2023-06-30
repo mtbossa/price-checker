@@ -35,6 +35,8 @@ export class TerabytePriceCheckerBot extends Bot implements PriceChecker {
     }
 
     async checkPagePrices(): Promise<Product[]> {
+        let productsData: Product[] = [];
+
         try {
             this.logger.info("Checking page prices");
 
@@ -44,7 +46,7 @@ export class TerabytePriceCheckerBot extends Bot implements PriceChecker {
             await page.waitForSelector(this.PRODUCT_PAGE_SELECTOR);
             const products = await page.$$(this.PRODUCT_PAGE_SELECTOR);
 
-            const productsData = await Promise.all(
+            productsData = await Promise.all(
                 products.map(async (product) => {
                     const url = await product.$eval("a", (el) => el.href);
                     const title = await product.$eval("h2", (el) => el.textContent);
@@ -70,10 +72,14 @@ export class TerabytePriceCheckerBot extends Bot implements PriceChecker {
 
             return productsData;
         } catch (e) {
+            this.logger.error("Error occurred while checking page prices in Terabyte");
             this.logger.error(e);
+            throw e;
+        } finally {
             await this.closeBrowser();
-            return [];
         }
+
+        return productsData;
     }
 
     private parsePrice(price: string): number {

@@ -62,7 +62,7 @@ export const generateEmailHTML = (result: PriceCheckerResult, store: AvalilableS
     `;
 };
 
-export const sendEmail = async (result: PriceCheckerResult, store: AvalilableStores) => {
+export const sendEmail = async (html: string, subject: string) => {
     const transporter = nodemailer.createTransport({
         host: process.env.SMTP_HOST,
         port: Number(process.env.SMTP_PORT),
@@ -73,14 +73,20 @@ export const sendEmail = async (result: PriceCheckerResult, store: AvalilableSto
         },
     });
 
-    const html = generateEmailHTML(result, store);
-
-    const serverName = process.env.SERVER_NAME ?? "NONE";
-
     await transporter.sendMail({
         from: process.env.SMTP_USER,
         to: "mateus.rbossa@gmail.com",
-        subject: `[ ${serverName} ] Price Change bot`,
-        html: html,
+        subject,
+        html,
     });
+};
+
+export const makePriceChangeEmail = (result: PriceCheckerResult, store: AvalilableStores) => {
+    const html = generateEmailHTML(result, store);
+    const subject = `[ ${process.env.SERVER_NAME ?? "NONE"} ] Price Change bot`;
+
+    return {
+        html,
+        subject,
+    };
 };

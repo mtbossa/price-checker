@@ -37,29 +37,43 @@ export class PichauPriceCheckerBot extends Bot implements PriceChecker {
     }
 
     async checkPagePrices(): Promise<Product[]> {
-        this.logger.info("Checking page prices");
+        let productsData: Product[] = [];
 
-        const page = await newPage(this.browser);
-        await navigateToURL(page, this.productsPage);
+        try {
+            this.logger.info("Checking page prices");
 
-        await page.waitForSelector(this.PRODUCT_PAGE_SELECTOR);
-        const products = await page.$$(this.PRODUCT_PAGE_SELECTOR);
+            const page = await newPage(this.browser);
+            await navigateToURL(page, this.productsPage);
 
-        const productsData = await Promise.all(
-            products.map(async (product) => {
-                const url = await page.evaluate((el) => el.href, product);
-                const title = await product.$("h2");
-                const name = await extractTextFromElement(title!);
+            await page.waitForSelector(this.PRODUCT_PAGE_SELECTOR);
+            const products = await page.$$(this.PRODUCT_PAGE_SELECTOR);
 
-                const avistaSpan = await product.$("span ::-p-text(à vista)");
-                const avistaPrice =
-                    (await page.evaluate((el) => el?.nextSibling?.textContent, avistaSpan)) ?? "0";
+            productsData = await Promise.all(
+                products.map(async (product) => {
+                    const url = await page.evaluate((el) => el.href, product);
+                    const title = await product.$("h2");
+                    const name = await extractTextFromElement(title!);
 
-                return new Product(name!, url, this.parsePrice(avistaPrice), storesIds["Pichau"]);
-            })
-        );
+                    const avistaSpan = await product.$("span ::-p-text(à vista)");
+                    const avistaPrice =
+                        (await page.evaluate((el) => el?.nextSibling?.textContent, avistaSpan)) ??
+                        "0";
 
-        await this.closeBrowser();
+                    return new Product(
+                        name!,
+                        url,
+                        this.parsePrice(avistaPrice),
+                        storesIds["Pichau"]
+                    );
+                })
+            );
+        } catch (error) {
+            this.logger.error("Error occurred while checking page prices in Pichau");
+            this.logger.error(error);
+            throw error;
+        } finally {
+            await this.closeBrowser();
+        }
 
         return productsData;
     }
