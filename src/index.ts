@@ -59,6 +59,8 @@ const getBot = async (store: AvalilableStores, botId: number) => {
                 logger.info(`Checking ${store}...`);
 
                 const bot = await getBot(store, index);
+                bots.push(bot);
+
                 const products = await bot.checkPagePrices();
 
                 const result = await priceChecker(products);
@@ -67,8 +69,6 @@ const getBot = async (store: AvalilableStores, botId: number) => {
                     const { html, subject } = makePriceChangeEmail(result, store);
                     await sendEmail(html, subject);
                 }
-
-                bots.push(bot);
             }
 
             const minutes = randomNumber(8, 12);
