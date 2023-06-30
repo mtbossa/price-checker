@@ -14,6 +14,8 @@
         "dev": "NODE_ENV=dev nodemon --exec node --loader ts-node/esm --inspect -r tsconfig-paths/register src/index.ts",
         "dev:windows": "set NODE_ENV=dev&&nodemon --exec node --loader ts-node/esm --inspect -r tsconfig-paths/register src/index.ts",
         "non-dev": "nodemon --exec node --loader ts-node/esm --inspect -r tsconfig-paths/register src/index.ts",
+        "start:prod": "NODE_ENV=prodcution node dist/src/index.js",
+        "start:prod:windows": "set NODE_ENV=production&&node dist/src/index.js",
         "build": "tsc",
         "test": "echo \"Error: no test specified\" && exit 1",
         "lint": "eslint . --max-warnings=0 --report-unused-disable-directives",
